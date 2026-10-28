@@ -63,17 +63,20 @@ export function SummaryChart({ data, lang, title, seriesLabel, emptyLabel }: Pro
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <table className="sr-only">
-        <caption>{title}</caption>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.name}>
-              <th scope="row">{d.name}</th>
-              <td>{formatMoney(d.totalCents, lang)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* The wrapper div does the clipping: `sr-only` directly on a <table> doesn't clip its cells. */}
+      <div className="sr-only">
+        <table>
+          <caption>{title}</caption>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.name}>
+                <th scope="row">{d.name}</th>
+                <td>{formatMoney(d.totalCents, lang)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

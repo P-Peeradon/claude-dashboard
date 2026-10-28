@@ -84,17 +84,20 @@ export function DailySalesChart({ data, lang, title, seriesLabel, emptyLabel }: 
         </ResponsiveContainer>
       </div>
       {/* Table view: every value stays reachable without hovering. */}
-      <table className="sr-only">
-        <caption>{title}</caption>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.day}>
-              <th scope="row">{long.format(toDate(d.day))}</th>
-              <td>{formatMoney(d.totalCents, lang)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* The wrapper div does the clipping: `sr-only` directly on a <table> doesn't clip its cells. */}
+      <div className="sr-only">
+        <table>
+          <caption>{title}</caption>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.day}>
+                <th scope="row">{long.format(toDate(d.day))}</th>
+                <td>{formatMoney(d.totalCents, lang)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
