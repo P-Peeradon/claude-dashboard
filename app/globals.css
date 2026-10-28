@@ -128,3 +128,10 @@
     @apply font-sans;
   }
 }
+/* Data-viz tokens: categorical slot 1 (blue), light and dark steps. Chart surface is --card. */
+:root {
+  --viz-series-1: #2a78d6;
+}
+.dark {
+  --viz-series-1: #3987e5;
+}

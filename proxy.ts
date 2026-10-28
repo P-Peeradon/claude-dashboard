@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { LOCALE_COOKIE, defaultLocale, hasLocale, locales, type Locale } from "@/i18n/config";
+import { unsealData } from "iron-session";
+import { LOCALE_COOKIE, defaultLocale, hasLocale, type Locale } from "@/i18n/config";
+import { SESSION_COOKIE, getSessionSecret, type SessionData } from "@/lib/session-config";
 
 // Picks the best supported locale from an Accept-Language header, e.g. "zh-CN,zh;q=0.9,en;q=0.8".
 function fromAcceptLanguage(header: string | null): Locale | undefined {
@@ -23,15 +25,46 @@ function getLocale(request: NextRequest): Locale {
   return fromAcceptLanguage(request.headers.get("accept-language")) ?? defaultLocale;
 }
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const hasLocalePrefix = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
-  if (hasLocalePrefix) return NextResponse.next();
+async function hasValidSession(request: NextRequest) {
+  const value = request.cookies.get(SESSION_COOKIE)?.value;
+  if (!value) return false;
+  try {
+    const data = await unsealData<Partial<SessionData>>(value, { password: getSessionSecret() });
+    return Boolean(data.userId);
+  } catch {
+    return false;
+  }
+}
 
-  // No locale in the path: redirect to /{locale}/...
-  const url = request.nextUrl.clone();
-  url.pathname = `/${getLocale(request)}${pathname === "/" ? "" : pathname}`;
-  return NextResponse.redirect(url);
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const segments = pathname.split("/");
+  const lang = segments[1];
+
+  if (!hasLocale(lang)) {
+    // No locale in the path: redirect to /{locale}/...
+    const url = request.nextUrl.clone();
+    url.pathname = `/${getLocale(request)}${pathname === "/" ? "" : pathname}`;
+    return NextResponse.redirect(url);
+  }
+
+  // Optimistic auth check only. Pages and Server Actions re-verify via lib/dal.ts.
+  const isLogin = segments[2] === "login" && segments.length <= 4;
+  const authed = await hasValidSession(request);
+
+  if (!authed && !isLogin) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${lang}/login`;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+  if (authed && isLogin) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${lang}/dashboard`;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+  return NextResponse.next();
 }
 
 export const config = {
