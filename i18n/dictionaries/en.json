@@ -51,6 +51,7 @@
     "dailySales": "Daily sales",
     "salesByPayment": "Sales by payment method",
     "salesByBranch": "Sales by branch",
+    "dateRange": "Date range",
     "range7": "Last 7 days",
     "range30": "Last 30 days",
     "rangeMonth": "This month",

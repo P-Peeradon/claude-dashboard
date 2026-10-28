@@ -51,6 +51,7 @@
     "dailySales": "每日销售额",
     "salesByPayment": "按支付方式的销售额",
     "salesByBranch": "按分店的销售额",
+    "dateRange": "日期范围",
     "range7": "最近 7 天",
     "range30": "最近 30 天",
     "rangeMonth": "本月",
