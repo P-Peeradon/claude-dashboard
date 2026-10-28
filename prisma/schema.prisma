@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  PAID
+  PENDING
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  PAYNOW
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Branch {
+  id     String  @id @default(cuid())
+  code   String  @unique
+  name   String
+  orders Order[]
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  branchId      String
+  branch        Branch        @relation(fields: [branchId], references: [id])
+  orderedAt     DateTime      @default(now())
+  status        OrderStatus   @default(PAID)
+  paymentMethod PaymentMethod
+  customerName  String?
+  totalCents    Int
+  items         OrderItem[]
+  createdAt     DateTime      @default(now())
+
+  @@index([branchId, orderedAt])
+  @@index([orderedAt])
+}
+
+model OrderItem {
+  id             String @id @default(cuid())
+  orderId        String
+  order          Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  name           String
+  quantity       Int
+  unitPriceCents Int
+}
