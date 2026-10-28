@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "title": "Lemak Cafe 仪表板",
+    "description": "Lemak Cafe 的销售仪表板与订单管理"
+  },
+  "common": {
+    "appName": "Lemak Cafe",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "search": "搜索",
+    "loading": "加载中…",
+    "all": "全部",
+    "actions": "操作",
+    "total": "总计",
+    "noData": "暂无数据",
+    "back": "返回",
+    "language": "语言",
+    "signOut": "退出登录",
+    "menu": "菜单",
+    "previous": "上一页",
+    "next": "下一页",
+    "page": "第 {page} 页，共 {pages} 页"
+  },
+  "nav": {
+    "dashboard": "仪表板",
+    "orders": "订单",
+    "newOrder": "新建订单"
+  },
+  "home": {
+    "welcome": "欢迎来到 Lemak Cafe",
+    "tagline": "所有分店的销售仪表板"
+  },
+  "auth": {
+    "loginTitle": "登录",
+    "loginSubtitle": "请输入员工账号以继续",
+    "email": "电子邮箱",
+    "password": "密码",
+    "signIn": "登录",
+    "signingIn": "登录中…",
+    "invalidCredentials": "邮箱或密码不正确",
+    "tooManyAttempts": "尝试次数过多，请稍后再试。"
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "totalSales": "总销售额",
+    "orderCount": "订单数",
+    "avgOrderValue": "平均订单金额",
+    "dailySales": "每日销售额",
+    "salesByPayment": "按支付方式的销售额",
+    "salesByBranch": "按分店的销售额",
+    "range7": "最近 7 天",
+    "range30": "最近 30 天",
+    "rangeMonth": "本月",
+    "branch": "分店",
+    "allBranches": "所有分店",
+    "recentOrders": "最近订单"
+  },
+  "orders": {
+    "title": "订单",
+    "new": "新建订单",
+    "edit": "编辑订单",
+    "branch": "分店",
+    "date": "日期",
+    "customer": "顾客",
+    "customerOptional": "顾客（选填）",
+    "payment": "支付方式",
+    "status": "状态",
+    "total": "总计",
+    "items": "商品",
+    "itemName": "商品",
+    "quantity": "数量",
+    "unitPrice": "单价（S$）",
+    "addItem": "添加商品",
+    "removeItem": "移除商品",
+    "deleteTitle": "删除此订单？",
+    "deleteConfirm": "此操作将永久删除该订单及其商品。",
+    "searchPlaceholder": "按顾客或商品搜索",
+    "noOrders": "未找到订单",
+    "created": "订单已创建",
+    "updated": "订单已更新",
+    "deleted": "订单已删除"
+  },
+  "status": {
+    "PAID": "已支付",
+    "PENDING": "待处理",
+    "CANCELLED": "已取消"
+  },
+  "payment": {
+    "CASH": "现金",
+    "CARD": "刷卡",
+    "PAYNOW": "PayNow"
+  },
+  "branches": {
+    "JURONG_WEST": "裕廊西",
+    "CHANGI_T2": "樟宜机场第二航站楼",
+    "CBD": "新加坡中央商业区"
+  },
+  "errors": {
+    "required": "此项为必填",
+    "invalidEmail": "请输入有效的电子邮箱",
+    "invalidNumber": "请输入有效的数字",
+    "minItems": "请至少添加一件商品",
+    "generic": "出错了，请重试。",
+    "notFound": "页面未找到",
+    "notFoundBody": "您访问的页面不存在。"
+  }
+}

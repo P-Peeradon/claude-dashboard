@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "title": "Lemak Cafe Dashboard",
+    "description": "Sales dashboard and order management for Lemak Cafe"
+  },
+  "common": {
+    "appName": "Lemak Cafe",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading…",
+    "all": "All",
+    "actions": "Actions",
+    "total": "Total",
+    "noData": "No data to show",
+    "back": "Back",
+    "language": "Language",
+    "signOut": "Sign out",
+    "menu": "Menu",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {pages}"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "newOrder": "New order"
+  },
+  "home": {
+    "welcome": "Welcome to Lemak Cafe",
+    "tagline": "Sales dashboard for all our branches"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Enter your staff account to continue",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "invalidCredentials": "Incorrect email or password",
+    "tooManyAttempts": "Too many attempts. Please try again later."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalSales": "Total sales",
+    "orderCount": "Orders",
+    "avgOrderValue": "Average order value",
+    "dailySales": "Daily sales",
+    "salesByPayment": "Sales by payment method",
+    "salesByBranch": "Sales by branch",
+    "range7": "Last 7 days",
+    "range30": "Last 30 days",
+    "rangeMonth": "This month",
+    "branch": "Branch",
+    "allBranches": "All branches",
+    "recentOrders": "Recent orders"
+  },
+  "orders": {
+    "title": "Orders",
+    "new": "New order",
+    "edit": "Edit order",
+    "branch": "Branch",
+    "date": "Date",
+    "customer": "Customer",
+    "customerOptional": "Customer (optional)",
+    "payment": "Payment",
+    "status": "Status",
+    "total": "Total",
+    "items": "Items",
+    "itemName": "Item",
+    "quantity": "Qty",
+    "unitPrice": "Unit price (S$)",
+    "addItem": "Add item",
+    "removeItem": "Remove item",
+    "deleteTitle": "Delete this order?",
+    "deleteConfirm": "This permanently removes the order and its items.",
+    "searchPlaceholder": "Search by customer or item",
+    "noOrders": "No orders found",
+    "created": "Order created",
+    "updated": "Order updated",
+    "deleted": "Order deleted"
+  },
+  "status": {
+    "PAID": "Paid",
+    "PENDING": "Pending",
+    "CANCELLED": "Cancelled"
+  },
+  "payment": {
+    "CASH": "Cash",
+    "CARD": "Card",
+    "PAYNOW": "PayNow"
+  },
+  "branches": {
+    "JURONG_WEST": "Jurong West",
+    "CHANGI_T2": "Changi Airport Terminal 2",
+    "CBD": "Singapore CBD"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Enter a valid email address",
+    "invalidNumber": "Enter a valid number",
+    "minItems": "Add at least one item",
+    "generic": "Something went wrong. Please try again.",
+    "notFound": "Page not found",
+    "notFoundBody": "The page you are looking for does not exist."
+  }
+}

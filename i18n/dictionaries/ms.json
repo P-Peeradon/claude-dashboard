@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "title": "Papan Pemuka Lemak Cafe",
+    "description": "Papan pemuka jualan dan pengurusan pesanan untuk Lemak Cafe"
+  },
+  "common": {
+    "appName": "Lemak Cafe",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Padam",
+    "edit": "Sunting",
+    "add": "Tambah",
+    "search": "Cari",
+    "loading": "Memuatkan…",
+    "all": "Semua",
+    "actions": "Tindakan",
+    "total": "Jumlah",
+    "noData": "Tiada data untuk dipaparkan",
+    "back": "Kembali",
+    "language": "Bahasa",
+    "signOut": "Log keluar",
+    "menu": "Menu",
+    "previous": "Sebelumnya",
+    "next": "Seterusnya",
+    "page": "Halaman {page} daripada {pages}"
+  },
+  "nav": {
+    "dashboard": "Papan pemuka",
+    "orders": "Pesanan",
+    "newOrder": "Pesanan baharu"
+  },
+  "home": {
+    "welcome": "Selamat datang ke Lemak Cafe",
+    "tagline": "Papan pemuka jualan untuk semua cawangan kami"
+  },
+  "auth": {
+    "loginTitle": "Log masuk",
+    "loginSubtitle": "Masukkan akaun staf anda untuk teruskan",
+    "email": "E-mel",
+    "password": "Kata laluan",
+    "signIn": "Log masuk",
+    "signingIn": "Sedang log masuk…",
+    "invalidCredentials": "E-mel atau kata laluan tidak betul",
+    "tooManyAttempts": "Terlalu banyak percubaan. Sila cuba lagi nanti."
+  },
+  "dashboard": {
+    "title": "Papan pemuka",
+    "totalSales": "Jumlah jualan",
+    "orderCount": "Pesanan",
+    "avgOrderValue": "Purata nilai pesanan",
+    "dailySales": "Jualan harian",
+    "salesByPayment": "Jualan mengikut kaedah pembayaran",
+    "salesByBranch": "Jualan mengikut cawangan",
+    "range7": "7 hari lepas",
+    "range30": "30 hari lepas",
+    "rangeMonth": "Bulan ini",
+    "branch": "Cawangan",
+    "allBranches": "Semua cawangan",
+    "recentOrders": "Pesanan terkini"
+  },
+  "orders": {
+    "title": "Pesanan",
+    "new": "Pesanan baharu",
+    "edit": "Sunting pesanan",
+    "branch": "Cawangan",
+    "date": "Tarikh",
+    "customer": "Pelanggan",
+    "customerOptional": "Pelanggan (pilihan)",
+    "payment": "Pembayaran",
+    "status": "Status",
+    "total": "Jumlah",
+    "items": "Item",
+    "itemName": "Item",
+    "quantity": "Kuantiti",
+    "unitPrice": "Harga seunit (S$)",
+    "addItem": "Tambah item",
+    "removeItem": "Buang item",
+    "deleteTitle": "Padam pesanan ini?",
+    "deleteConfirm": "Tindakan ini memadam pesanan dan itemnya secara kekal.",
+    "searchPlaceholder": "Cari mengikut pelanggan atau item",
+    "noOrders": "Tiada pesanan ditemui",
+    "created": "Pesanan dicipta",
+    "updated": "Pesanan dikemas kini",
+    "deleted": "Pesanan dipadam"
+  },
+  "status": {
+    "PAID": "Dibayar",
+    "PENDING": "Belum selesai",
+    "CANCELLED": "Dibatalkan"
+  },
+  "payment": {
+    "CASH": "Tunai",
+    "CARD": "Kad",
+    "PAYNOW": "PayNow"
+  },
+  "branches": {
+    "JURONG_WEST": "Jurong West",
+    "CHANGI_T2": "Terminal 2 Lapangan Terbang Changi",
+    "CBD": "CBD Singapura"
+  },
+  "errors": {
+    "required": "Medan ini diperlukan",
+    "invalidEmail": "Masukkan alamat e-mel yang sah",
+    "invalidNumber": "Masukkan nombor yang sah",
+    "minItems": "Tambah sekurang-kurangnya satu item",
+    "generic": "Sesuatu telah berlaku. Sila cuba lagi.",
+    "notFound": "Halaman tidak ditemui",
+    "notFoundBody": "Halaman yang anda cari tidak wujud."
+  }
+}
