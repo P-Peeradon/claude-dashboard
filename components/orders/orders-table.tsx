@@ -15,13 +15,19 @@ export type OrderRow = {
   branch: { code: string };
 };
 
-type Props = { orders: OrderRow[]; lang: Locale; dict: Dictionary };
+type Props = {
+  orders: OrderRow[];
+  lang: Locale;
+  dict: Dictionary;
+  /** When given, adds an actions column (table) / row (cards), e.g. edit and delete. */
+  renderActions?: (orderId: string) => React.ReactNode;
+};
 
 const branchName = (dict: Dictionary, code: string) =>
   (dict.branches as Record<string, string>)[code] ?? code;
 
 // Table from `md` up; stacked cards on mobile.
-export function OrdersTable({ orders, lang, dict }: Props) {
+export function OrdersTable({ orders, lang, dict, renderActions }: Props) {
   if (orders.length === 0) {
     return <p className="py-10 text-center text-sm text-muted-foreground">{dict.orders.noOrders}</p>;
   }
@@ -38,6 +44,7 @@ export function OrdersTable({ orders, lang, dict }: Props) {
               <TableHead>{dict.orders.payment}</TableHead>
               <TableHead>{dict.orders.status}</TableHead>
               <TableHead className="text-right">{dict.orders.total}</TableHead>
+              {renderActions && <TableHead className="text-right">{dict.common.actions}</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -51,6 +58,11 @@ export function OrdersTable({ orders, lang, dict }: Props) {
                   <StatusBadge status={o.status} label={dict.status[o.status]} />
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{formatMoney(o.totalCents, lang)}</TableCell>
+                {renderActions && (
+                  <TableCell>
+                    <div className="flex justify-end gap-2">{renderActions(o.id)}</div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -70,6 +82,7 @@ export function OrdersTable({ orders, lang, dict }: Props) {
                 {branchName(dict, o.branch.code)} · {dict.payment[o.paymentMethod]}
                 {o.customerName ? ` · ${o.customerName}` : ""}
               </div>
+              {renderActions && <div className="flex flex-wrap gap-2 pt-1">{renderActions(o.id)}</div>}
             </Card>
           </li>
         ))}

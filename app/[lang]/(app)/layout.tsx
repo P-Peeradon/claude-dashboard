@@ -1,46 +1,85 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { logout } from "@/actions/auth";
 import { LangSwitcher } from "@/components/layout/lang-switcher";
+import { MobileNav } from "@/components/layout/mobile-nav";
+import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { logout } from "@/actions/auth";
+import type { Locale } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
 import { verifySession } from "@/lib/dal";
 
-// Minimal authenticated shell. Step 7 replaces the top bar with the sidebar / mobile drawer.
-export default function AppLayout({ children }: LayoutProps<"/[lang]">) {
-  return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <Suspense fallback={<Skeleton className="h-16 w-full rounded-none" />}>
-        <AppHeader />
+// Authenticated shell: a fixed sidebar from `md` up, a top bar with a drawer below it.
+// Nothing here reads the session except <UserBox>, which streams in behind its own Suspense
+// boundary, so the shell itself stays in the static prerender.
+export default async function AppLayout({ children }: LayoutProps<"/[lang]">) {
+  const [lang, dict] = await Promise.all([getLocale(), getDictionary()]);
+
+  const items = [
+    { key: "dashboard", label: dict.nav.dashboard },
+    { key: "orders", label: dict.nav.orders },
+    { key: "newOrder", label: dict.nav.newOrder },
+  ] as const;
+
+  // Rendered twice (desktop sidebar and mobile drawer), so build it once as a function.
+  const menu = () => (
+    <>
+      {/* usePathname() in these client components is runtime data, so each sits behind Suspense. */}
+      <Suspense fallback={<Skeleton className="h-36 w-full" />}>
+        <SidebarNav lang={lang} items={[...items]} />
       </Suspense>
-      <div className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">{children}</div>
+      <div className="mt-auto flex flex-col gap-3">
+        <Suspense fallback={<Skeleton className="h-11 w-full" />}>
+          <LangSwitcher lang={lang} label={dict.common.language} />
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-24 w-full" />}>
+          <UserBox lang={lang} signOut={dict.common.signOut} />
+        </Suspense>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="flex min-h-full flex-1">
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r bg-card p-4 md:flex">
+        <Link href={`/${lang}/dashboard`} className="px-3 text-lg font-semibold">
+          {dict.common.appName}
+        </Link>
+        {menu()}
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b bg-card p-3 md:hidden">
+          <Suspense fallback={<Skeleton className="size-11" />}>
+            <MobileNav title={dict.common.appName} menuLabel={dict.common.menu}>
+              {menu()}
+            </MobileNav>
+          </Suspense>
+          <Link href={`/${lang}/dashboard`} className="text-lg font-semibold">
+            {dict.common.appName}
+          </Link>
+        </header>
+        <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-6">{children}</main>
+      </div>
     </div>
   );
 }
 
-// The session is read here, behind Suspense, so the rest of the layout stays in the static shell.
-async function AppHeader() {
-  const lang = await getLocale();
-  const [dict, user] = await Promise.all([getDictionary(), verifySession(lang)]);
-
+async function UserBox({ lang, signOut }: { lang: Locale; signOut: string }) {
+  const user = await verifySession(lang);
   return (
-    <header className="border-b bg-card">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 p-3 md:px-6">
-        <Link href={`/${lang}/dashboard`} className="text-lg font-semibold">
-          {dict.common.appName}
-        </Link>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <LangSwitcher lang={lang} label={dict.common.language} />
-          <span className="text-sm text-muted-foreground">{user.name}</span>
-          <form action={logout}>
-            <input type="hidden" name="lang" value={lang} />
-            <Button type="submit" variant="outline" className="h-11">
-              {dict.common.signOut}
-            </Button>
-          </form>
-        </div>
+    <div className="flex flex-col gap-2 border-t pt-3">
+      <div className="px-1">
+        <div className="truncate text-sm font-medium">{user.name}</div>
+        <div className="truncate text-xs text-muted-foreground">{user.email}</div>
       </div>
-    </header>
+      <form action={logout}>
+        <input type="hidden" name="lang" value={lang} />
+        <Button type="submit" variant="outline" className="h-11 w-full">
+          {signOut}
+        </Button>
+      </form>
+    </div>
   );
 }

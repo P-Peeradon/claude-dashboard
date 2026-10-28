@@ -15,6 +15,10 @@ export type RangeBounds = {
   days: string[]; // every SGT calendar day in the range, as YYYY-MM-DD
 };
 
+// "YYYY-MM-DDTHH:mm" for <input type="datetime-local">, in Singapore time.
+export const toSgtInput = (date: Date | number = Date.now()) =>
+  new Date(new Date(date).getTime() + SGT_OFFSET_MS).toISOString().slice(0, 16);
+
 export function getRangeBounds(range: Range, now: number = Date.now()): RangeBounds {
   const sg = new Date(now + SGT_OFFSET_MS);
   const y = sg.getUTCFullYear();

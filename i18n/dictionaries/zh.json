@@ -64,6 +64,7 @@
     "new": "新建订单",
     "edit": "编辑订单",
     "branch": "分店",
+    "selectBranch": "选择分店",
     "date": "日期",
     "customer": "顾客",
     "customerOptional": "顾客（选填）",

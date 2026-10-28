@@ -64,6 +64,7 @@
     "new": "New order",
     "edit": "Edit order",
     "branch": "Branch",
+    "selectBranch": "Select branch",
     "date": "Date",
     "customer": "Customer",
     "customerOptional": "Customer (optional)",

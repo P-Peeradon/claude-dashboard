@@ -2,10 +2,9 @@ import "server-only";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { TIME_ZONE } from "@/i18n/config";
+import { listOrders } from "./orders";
 
 export type Filters = { from: Date; to: Date; branchId?: string };
-
-export const ORDERS_PAGE_SIZE = 10;
 
 // Sales exclude cancelled orders; the order table still lists them with a status badge.
 const salesWhere = ({ from, to, branchId }: Filters): Prisma.OrderWhereInput => ({
@@ -68,28 +67,12 @@ export async function getSalesByBranch(filters: Omit<Filters, "branchId">) {
     .sort((a, b) => b.totalCents - a.totalCents);
 }
 
-export async function getOrdersPage(filters: Filters, page: number) {
-  const where: Prisma.OrderWhereInput = {
-    orderedAt: { gte: filters.from, lt: filters.to },
-    ...(filters.branchId ? { branchId: filters.branchId } : {}),
-  };
-  const [total, orders] = await Promise.all([
-    prisma.order.count({ where }),
-    prisma.order.findMany({
-      where,
-      orderBy: [{ orderedAt: "desc" }, { id: "desc" }],
-      skip: (page - 1) * ORDERS_PAGE_SIZE,
-      take: ORDERS_PAGE_SIZE,
-      select: {
-        id: true,
-        orderedAt: true,
-        status: true,
-        paymentMethod: true,
-        customerName: true,
-        totalCents: true,
-        branch: { select: { code: true } },
-      },
-    }),
-  ]);
-  return { orders, total, pages: Math.max(1, Math.ceil(total / ORDERS_PAGE_SIZE)) };
+export function getOrdersPage(filters: Filters, page: number) {
+  return listOrders(
+    {
+      orderedAt: { gte: filters.from, lt: filters.to },
+      ...(filters.branchId ? { branchId: filters.branchId } : {}),
+    },
+    page,
+  );
 }
