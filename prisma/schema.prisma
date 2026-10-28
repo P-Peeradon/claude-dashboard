@@ -24,6 +24,9 @@ model User {
   email        String   @unique
   name         String
   passwordHash String
+  // Home branch only: informational, it does not restrict which branches a user can see.
+  branchId     String?
+  branch       Branch?  @relation(fields: [branchId], references: [id])
   createdAt    DateTime @default(now())
 }
 
@@ -32,6 +35,7 @@ model Branch {
   code   String  @unique
   name   String
   orders Order[]
+  users  User[]
 }
 
 model Order {
