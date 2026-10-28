@@ -1,0 +1,66 @@
+# Rendered by the nginx image's envsubst step: ${DOMAIN} comes from the compose environment.
+# Other `$variables` below are nginx's own and are left untouched.
+
+# Slows brute-force attempts against the sign-in page (the app also rate-limits failed logins).
+limit_req_zone $binary_remote_addr zone=login:10m rate=10r/m;
+
+upstream app {
+    server app:3000;
+    keepalive 16;
+}
+
+server {
+    listen 80;
+    server_name ${DOMAIN};
+
+    # Let's Encrypt HTTP-01 challenges for certificate renewal.
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name ${DOMAIN};
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_session_cache   shared:SSL:10m;
+
+    add_header Strict-Transport-Security "max-age=31536000" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    client_max_body_size 1m;
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript image/svg+xml;
+
+    # Everything below is inherited by the locations. The forwarded host must equal the public
+    # domain, because Server Actions compare the request's Origin with the Host.
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    # Set (not appended) so a client cannot spoof the address the login rate limiter keys on.
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Real-IP $remote_addr;
+
+    location ~ ^/(en|ms|zh|ta)/login/?$ {
+        limit_req zone=login burst=10 nodelay;
+        limit_req_status 429;
+        proxy_pass http://app;
+    }
+
+    location / {
+        proxy_pass http://app;
+    }
+}

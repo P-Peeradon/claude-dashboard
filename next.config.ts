@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
+  // Self-contained server.js + minimal node_modules for the Docker image.
+  output: "standalone",
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

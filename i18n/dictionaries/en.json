@@ -107,6 +107,8 @@
     "minItems": "Add at least one item",
     "generic": "Something went wrong. Please try again.",
     "notFound": "Page not found",
-    "notFoundBody": "The page you are looking for does not exist."
+    "notFoundBody": "The page you are looking for does not exist.",
+    "retry": "Try again",
+    "backToDashboard": "Back to dashboard"
   }
 }

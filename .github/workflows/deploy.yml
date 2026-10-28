@@ -1,0 +1,110 @@
+name: Deploy
+
+# Runs after CI succeeds on main, or manually. Builds the images, pushes them to GHCR, copies the
+# compose/nginx files to the server over SSH and restarts the stack.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    # Add required reviewers to this environment in GitHub settings for a manual approval gate.
+    environment: production
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Compute image names
+        id: img
+        run: |
+          repo="ghcr.io/${GITHUB_REPOSITORY,,}"
+          sha="${{ github.event.workflow_run.head_sha || github.sha }}"
+          echo "app=${repo}:${sha}" >> "$GITHUB_OUTPUT"
+          echo "migrator=${repo}-migrator:${sha}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push app image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: runner
+          push: true
+          tags: ${{ steps.img.outputs.app }}
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,mode=max,scope=app
+
+      - name: Build and push migrator image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: migrator
+          push: true
+          tags: ${{ steps.img.outputs.migrator }}
+          cache-from: type=gha,scope=migrator
+          cache-to: type=gha,mode=max,scope=migrator
+
+      - name: Copy deployment files to the server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: docker-compose.prod.yml,nginx,deploy
+          target: ${{ vars.DEPLOY_PATH }}
+          overwrite: true
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          APP_IMAGE: ${{ steps.img.outputs.app }}
+          MIGRATOR_IMAGE: ${{ steps.img.outputs.migrator }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          envs: APP_IMAGE,MIGRATOR_IMAGE,GHCR_USER,GHCR_TOKEN
+          script_stop: true
+          script: |
+            cd "${{ vars.DEPLOY_PATH }}"
+            chmod +x deploy/backup.sh
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+            # Keep the previous image tags so a bad release can be rolled back.
+            [ -f .env.images ] && cp .env.images .env.images.prev || true
+            printf 'APP_IMAGE=%s\nMIGRATOR_IMAGE=%s\n' "$APP_IMAGE" "$MIGRATOR_IMAGE" > .env.images
+
+            COMPOSE="docker compose --env-file .env.production --env-file .env.images -f docker-compose.prod.yml"
+            $COMPOSE pull
+            $COMPOSE up -d --remove-orphans
+
+            # Wait for the new app container to report healthy.
+            for i in $(seq 1 30); do
+              status=$(docker inspect --format '{{.State.Health.Status}}' "$($COMPOSE ps -q app)" 2>/dev/null || echo starting)
+              [ "$status" = "healthy" ] && { echo "app healthy"; docker image prune -f >/dev/null; exit 0; }
+              sleep 4
+            done
+            echo "app did not become healthy; see: $COMPOSE logs app migrate" >&2
+            exit 1

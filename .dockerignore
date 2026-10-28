@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.github
+.env*
+!.env.example
+generated
+*.md
+nginx
+deploy
+docker-compose*.yml
+Dockerfile
+.dockerignore
+.vscode
+.idea
+*.tsbuildinfo

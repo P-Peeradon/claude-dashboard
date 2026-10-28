@@ -107,6 +107,8 @@
     "minItems": "Tambah sekurang-kurangnya satu item",
     "generic": "Sesuatu telah berlaku. Sila cuba lagi.",
     "notFound": "Halaman tidak ditemui",
-    "notFoundBody": "Halaman yang anda cari tidak wujud."
+    "notFoundBody": "Halaman yang anda cari tidak wujud.",
+    "retry": "Cuba lagi",
+    "backToDashboard": "Kembali ke papan pemuka"
   }
 }

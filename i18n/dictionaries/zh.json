@@ -107,6 +107,8 @@
     "minItems": "请至少添加一件商品",
     "generic": "出错了，请重试。",
     "notFound": "页面未找到",
-    "notFoundBody": "您访问的页面不存在。"
+    "notFoundBody": "您访问的页面不存在。",
+    "retry": "重试",
+    "backToDashboard": "返回仪表板"
   }
 }
